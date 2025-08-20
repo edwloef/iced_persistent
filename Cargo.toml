@@ -1,0 +1,8 @@
+[package]
+name = "iced_persistent"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+
+[dependencies]
+iced_core = { git = "https://github.com/iced-rs/iced.git" }
