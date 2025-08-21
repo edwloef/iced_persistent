@@ -5,4 +5,4 @@ edition = "2024"
 license = "MIT"
 
 [dependencies]
-iced_core = { git = "https://github.com/iced-rs/iced.git" }
+iced_core = { git = "https://github.com/edwloef/iced.git", branch = "generic-daw" }
