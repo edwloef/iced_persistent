@@ -61,7 +61,7 @@ where
     }
 
     fn layout(&mut self, _: &mut widget::Tree, renderer: &Renderer, limits: &Limits) -> Node {
-        self.tree.diff(&mut self.child);
+        self.tree.diff(&self.child);
         self.child
             .as_widget_mut()
             .layout(&mut self.tree, renderer, limits)
