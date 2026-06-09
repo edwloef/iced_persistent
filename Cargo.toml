@@ -1,0 +1,10 @@
+[package]
+name = "iced_persistent"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+iced_core = "0.15.0-dev"
+
+[patch.crates-io]
+iced_core.git = "https://github.com/iced-rs/iced"
