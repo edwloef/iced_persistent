@@ -1,10 +1,10 @@
 use iced_core::{
+    Element, Event, Layout, Length, Rectangle, Shell, Size, Vector, Widget,
     layout::{Limits, Node},
     mouse::{Cursor, Interaction},
     overlay,
     renderer::Style,
     widget::{self, Operation},
-    Element, Event, Layout, Length, Rectangle, Shell, Size, Vector, Widget,
 };
 use std::cell::{RefCell, RefMut};
 
@@ -70,7 +70,7 @@ where
     }
 
     fn diff(&mut self, _: &mut widget::Tree) {
-        self.child.as_widget_mut().diff(&mut self.tree);
+        self.tree.diff(&mut self.child);
     }
 
     fn operate(
