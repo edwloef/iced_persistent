@@ -77,12 +77,13 @@ where
         &mut self,
         _: &mut widget::Tree,
         layout: Layout<'_>,
+        viewport: &Rectangle,
         renderer: &Renderer,
         operation: &mut dyn Operation,
     ) {
         self.child
             .as_widget_mut()
-            .operate(&mut self.tree, layout, renderer, operation);
+            .operate(&mut self.tree, layout, viewport, renderer, operation);
     }
 
     fn update(
@@ -126,7 +127,7 @@ where
         renderer: &Renderer,
         viewport: &Rectangle,
         translation: Vector,
-    ) -> Option<overlay::Element<'a, Message, Theme, Renderer>> {
+    ) -> Vec<overlay::Element<'a, Message, Theme, Renderer>> {
         self.child
             .as_widget_mut()
             .overlay(&mut self.tree, layout, renderer, viewport, translation)
