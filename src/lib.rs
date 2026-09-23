@@ -1,6 +1,6 @@
 use iced_core::{
     Element, Event, Layout, Length, Rectangle, Shell, Size, Vector, Widget,
-    layout::{Limits, Node},
+    layout::Limits,
     mouse::{Cursor, Interaction},
     overlay,
     renderer::Style,
@@ -48,10 +48,10 @@ where
         self.child.as_widget().size()
     }
 
-    fn layout(&mut self, _: &mut widget::Tree, renderer: &Renderer, limits: &Limits) -> Node {
+    fn layout(&mut self, _: &mut widget::Tree, renderer: &Renderer, limits: &Limits) {
         self.child
             .as_widget_mut()
-            .layout(&mut self.tree, renderer, limits)
+            .layout(&mut self.tree, renderer, limits);
     }
 
     fn draw(
@@ -60,7 +60,7 @@ where
         renderer: &mut Renderer,
         theme: &Theme,
         style: &Style,
-        layout: Layout<'_>,
+        layout: Layout,
         cursor: Cursor,
         viewport: &Rectangle,
     ) {
@@ -76,7 +76,7 @@ where
     fn operate(
         &mut self,
         _: &mut widget::Tree,
-        layout: Layout<'_>,
+        layout: Layout,
         viewport: &Rectangle,
         renderer: &Renderer,
         operation: &mut dyn Operation,
@@ -90,7 +90,7 @@ where
         &mut self,
         _: &mut widget::Tree,
         event: &Event,
-        layout: Layout<'_>,
+        layout: Layout,
         cursor: Cursor,
         renderer: &Renderer,
         shell: &mut Shell<'_, Message>,
@@ -110,7 +110,7 @@ where
     fn mouse_interaction(
         &self,
         _: &widget::Tree,
-        layout: Layout<'_>,
+        layout: Layout,
         cursor: Cursor,
         viewport: &Rectangle,
         renderer: &Renderer,
@@ -123,14 +123,20 @@ where
     fn overlay<'a>(
         &'a mut self,
         _: &'a mut widget::Tree,
-        layout: Layout<'a>,
+        layout: Layout,
         renderer: &Renderer,
         viewport: &Rectangle,
         translation: Vector,
+        window: Size,
     ) -> Vec<overlay::Element<'a, Message, Theme, Renderer>> {
-        self.child
-            .as_widget_mut()
-            .overlay(&mut self.tree, layout, renderer, viewport, translation)
+        self.child.as_widget_mut().overlay(
+            &mut self.tree,
+            layout,
+            renderer,
+            viewport,
+            translation,
+            window,
+        )
     }
 }
 
