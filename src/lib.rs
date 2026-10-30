@@ -1,18 +1,15 @@
 use iced_core::{
-    Element, Event, Layout, Length, Rectangle, Shell, Size, Vector, Widget,
+    Event, Layout, Length, Rectangle, Shell, Size, Vector, Widget,
     layout::Limits,
     mouse::{Cursor, Interaction},
     overlay,
     renderer::Style,
-    widget::{self, Operation},
+    widget::{self, Meta, Operation},
 };
 use std::cell::{RefCell, RefMut};
 
 #[must_use]
-pub fn persistent<'a, Message, Theme, Renderer>(
-    child: impl Into<Element<'a, Message, Theme, Renderer>>,
-    tree: &'a Tree,
-) -> Persistent<'a, Message, Theme, Renderer> {
+pub fn persistent<W>(child: W, tree: &Tree) -> Persistent<'_, W> {
     Persistent::new(child, tree)
 }
 
@@ -25,33 +22,32 @@ impl Default for Tree {
     }
 }
 
-pub struct Persistent<'a, Message, Theme, Renderer> {
-    child: Element<'a, Message, Theme, Renderer>,
+pub struct Persistent<'a, W> {
+    child: W,
     tree: RefMut<'a, widget::Tree>,
 }
 
-impl<'a, Message, Theme, Renderer> Persistent<'a, Message, Theme, Renderer> {
+impl<'a, W> Persistent<'a, W> {
     #[must_use]
-    pub fn new(child: impl Into<Element<'a, Message, Theme, Renderer>>, tree: &'a Tree) -> Self {
-        let child = child.into();
+    pub fn new(child: W, tree: &'a Tree) -> Self {
         let tree = tree.0.borrow_mut();
         Self { child, tree }
     }
 }
 
-impl<Message, Theme, Renderer> Widget<Message, Theme, Renderer>
-    for Persistent<'_, Message, Theme, Renderer>
+impl<W> Meta for Persistent<'_, W> {}
+
+impl<W, Message, Theme, Renderer> Widget<Message, Theme, Renderer> for Persistent<'_, W>
 where
     Renderer: iced_core::Renderer,
+    W: Widget<Message, Theme, Renderer>,
 {
     fn size(&self) -> Size<Length> {
-        self.child.as_widget().size()
+        self.child.size()
     }
 
     fn layout(&mut self, _: &mut widget::Tree, renderer: &Renderer, limits: &Limits) {
-        self.child
-            .as_widget_mut()
-            .layout(&mut self.tree, renderer, limits);
+        self.child.layout(&mut self.tree, renderer, limits);
     }
 
     fn draw(
@@ -65,7 +61,6 @@ where
         viewport: &Rectangle,
     ) {
         self.child
-            .as_widget()
             .draw(&self.tree, renderer, theme, style, layout, cursor, viewport);
     }
 
@@ -82,7 +77,6 @@ where
         operation: &mut dyn Operation,
     ) {
         self.child
-            .as_widget_mut()
             .operate(&mut self.tree, layout, viewport, renderer, operation);
     }
 
@@ -96,7 +90,7 @@ where
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
-        self.child.as_widget_mut().update(
+        self.child.update(
             &mut self.tree,
             event,
             layout,
@@ -116,7 +110,6 @@ where
         renderer: &Renderer,
     ) -> Interaction {
         self.child
-            .as_widget()
             .mouse_interaction(&self.tree, layout, cursor, viewport, renderer)
     }
 
@@ -129,7 +122,7 @@ where
         translation: Vector,
         window: Size,
     ) -> Vec<overlay::Element<'a, Message, Theme, Renderer>> {
-        self.child.as_widget_mut().overlay(
+        self.child.overlay(
             &mut self.tree,
             layout,
             renderer,
@@ -137,17 +130,5 @@ where
             translation,
             window,
         )
-    }
-}
-
-impl<'a, Message, Theme, Renderer> From<Persistent<'a, Message, Theme, Renderer>>
-    for Element<'a, Message, Theme, Renderer>
-where
-    Message: 'a,
-    Theme: 'a,
-    Renderer: iced_core::Renderer + 'a,
-{
-    fn from(value: Persistent<'a, Message, Theme, Renderer>) -> Self {
-        Self::new(value)
     }
 }
