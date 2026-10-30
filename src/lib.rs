@@ -9,7 +9,7 @@ use iced_core::{
 use std::cell::{RefCell, RefMut};
 
 #[must_use]
-pub fn persistent<'a, W>(child: W, tree: &'a Tree) -> Persistent<'a, W> {
+pub fn persistent<W>(child: W, tree: &Tree) -> Persistent<'_, W> {
     Persistent::new(child, tree)
 }
 
@@ -30,13 +30,12 @@ pub struct Persistent<'a, W> {
 impl<'a, W> Persistent<'a, W> {
     #[must_use]
     pub fn new(child: W, tree: &'a Tree) -> Self {
-        let child = child.into();
         let tree = tree.0.borrow_mut();
         Self { child, tree }
     }
 }
 
-impl<'a, W> Meta for Persistent<'a, W> {}
+impl<W> Meta for Persistent<'_, W> {}
 
 impl<W, Message, Theme, Renderer> Widget<Message, Theme, Renderer> for Persistent<'_, W>
 where
